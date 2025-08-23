@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio de Alunos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sorteador de Alunos</h1>
+            <p>Gerencie turmas, alunos e tarefas para realizar sorteios.</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Adicionar Turma</h2>
+                <form action="{{ url_for('adicionar_turma') }}" method="post">
+                    <input type="text" name="nome_turma" placeholder="Nome da Turma (Ex: 3ºB)" required>
+                    <button type="submit">Adicionar</button>
+                </form>
+            </section>
+
+            <section class="form-section">
+                <h2>Adicionar Aluno</h2>
+                <form action="{{ url_for('adicionar_aluno') }}" method="post">
+                    <input type="text" name="nome_aluno" placeholder="Nome do Aluno" required>
+                    <select name="turma_id" required>
+                        <option value="">Selecione a Turma</option>
+                        {% for turma in turmas %}
+                            <option value="{{ turma.id }}">{{ turma.nome }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Adicionar</button>
+                </form>
+            </section>
+
+            <section class="form-section">
+                <h2>Adicionar Tarefa</h2>
+                <form action="{{ url_for('adicionar_tarefa') }}" method="post">
+                    <input type="text" name="nome_tarefa" placeholder="Nome da Tarefa (Ex: Apresentação)" required>
+                    <button type="submit">Adicionar</button>
+                </form>
+            </section>
+
+            <section class="form-section draw-section">
+                <h2>Realizar Sorteio</h2>
+                <form action="{{ url_for('sortear') }}" method="post">
+                    <div class="draw-inputs">
+                        <select name="turma_sorteio_id" required>
+                            <option value="">Selecione a Turma</option>
+                            {% for turma in turmas %}
+                                <option value="{{ turma.id }}">{{ turma.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="tarefa_sorteio_id" required>
+                            <option value="">Selecione a Tarefa</option>
+                            {% for tarefa in tarefas %}
+                                <option value="{{ tarefa.id }}">{{ tarefa.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="draw-button">Sortear Aluno</button>
+                </form>
+            </section>
+
+            <section class="results-section">
+                <h2>Sorteios Recentes</h2>
+                {% if sorteios %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Turma</th>
+                                <th>Aluno Sorteado</th>
+                                <th>Tarefa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sorteio in sorteios %}
+                                <tr>
+                                    <td>{{ sorteio.data_sorteio }}</td>
+                                    <td>{{ sorteio.turma_nome }}</td>
+                                    <td class="winner">{{ sorteio.aluno_nome }}</td>
+                                    <td>{{ sorteio.tarefa_nome }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-results">Nenhum sorteio realizado ainda.</p>
+                {% endif %}
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Sorteio de Alunos. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>
