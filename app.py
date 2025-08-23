@@ -1,27 +1,21 @@
-# app.py
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import random
 from datetime import datetime
 from db import get_db_connection, init_db
 
-# Inicializa o banco de dados ao iniciar a aplicação.
 init_db()
 
 app = Flask(__name__)
 
-# Rota principal para exibir a página e os dados.
 @app.route('/')
 def index():
     conn = get_db_connection()
     
-    # Busca todas as turmas para o dropdown.
     turmas = conn.execute('SELECT * FROM turmas').fetchall()
     
-    # Busca todas as tarefas para o dropdown.
     tarefas = conn.execute('SELECT * FROM tarefas').fetchall()
     
-    # Busca os sorteios realizados com os nomes correspondentes.
     sorteios = conn.execute('''
         SELECT
             sorteios.data_sorteio,
@@ -37,10 +31,8 @@ def index():
     
     conn.close()
     
-    # Renderiza a página principal, passando todos os dados.
     return render_template('index.html', turmas=turmas, tarefas=tarefas, sorteios=sorteios)
 
-# Rota para adicionar uma nova turma.
 @app.route('/adicionar_turma', methods=['POST'])
 def adicionar_turma():
     if request.method == 'POST':
@@ -50,13 +42,11 @@ def adicionar_turma():
             conn.execute('INSERT INTO turmas (nome) VALUES (?)', (turma_nome,))
             conn.commit()
         except sqlite3.IntegrityError:
-            # Caso o nome da turma já exista, ignora o erro.
             pass
         finally:
             conn.close()
     return redirect(url_for('index'))
 
-# Rota para adicionar um novo aluno.
 @app.route('/adicionar_aluno', methods=['POST'])
 def adicionar_aluno():
     if request.method == 'POST':
@@ -68,7 +58,6 @@ def adicionar_aluno():
         conn.close()
     return redirect(url_for('index'))
 
-# Rota para adicionar uma nova tarefa.
 @app.route('/adicionar_tarefa', methods=['POST'])
 def adicionar_tarefa():
     if request.method == 'POST':
@@ -78,13 +67,11 @@ def adicionar_tarefa():
             conn.execute('INSERT INTO tarefas (nome) VALUES (?)', (tarefa_nome,))
             conn.commit()
         except sqlite3.IntegrityError:
-            # Caso o nome da tarefa já exista, ignora o erro.
             pass
         finally:
             conn.close()
     return redirect(url_for('index'))
 
-# Rota para realizar o sorteio.
 @app.route('/sortear', methods=['POST'])
 def sortear():
     if request.method == 'POST':
@@ -93,15 +80,11 @@ def sortear():
         
         conn = get_db_connection()
         
-        # Busca todos os alunos da turma selecionada.
         alunos = conn.execute('SELECT * FROM alunos WHERE turma_id = ?', (turma_id,)).fetchall()
         
-        # Verifica se há alunos para sortear.
         if alunos:
-            # Realiza o sorteio de um aluno aleatoriamente.
             aluno_sorteado = random.choice(alunos)
             
-            # Salva o resultado do sorteio no banco de dados.
             data_sorteio = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             conn.execute('INSERT INTO sorteios (tarefa_id, aluno_id, turma_id, data_sorteio) VALUES (?, ?, ?, ?)',
                          (tarefa_id, aluno_sorteado['id'], turma_id, data_sorteio))
