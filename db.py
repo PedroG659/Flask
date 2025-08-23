@@ -1,14 +1,10 @@
-# db.py
 import sqlite3
 
-# Função para conectar ao banco de dados.
-# Se o arquivo do banco de dados não existir, ele será criado.
 def get_db_connection():
     conn = sqlite3.connect('sorteio.db')
-    conn.row_factory = sqlite3.Row  # Isso permite acessar colunas por nome
+    conn.row_factory = sqlite3.Row
     return conn
 
-# Função para inicializar o banco de dados e criar as tabelas necessárias.
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
