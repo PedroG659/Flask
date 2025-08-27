@@ -12,6 +12,16 @@
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+body.dark-mode {
+    --background-color: #1a202c;
+    --card-background: #2d3748;
+    --text-color: #e2e8f0;
+    --heading-color: #fff;
+    --border-color: #4a5568;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+
 * {
     box-sizing: border-box;
     margin: 0;
