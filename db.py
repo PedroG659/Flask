@@ -1,33 +1,45 @@
+# db.py
 import sqlite3
 
+# Função para conectar ao banco de dados.
+# Se o arquivo do banco de dados não existir, ele será criado.
 def get_db_connection():
     conn = sqlite3.connect('sorteio.db')
-    conn.row_factory = sqlite3.Row
+    conn.row_factory = sqlite3.Row  # Isso permite acessar colunas por nome
     return conn
 
+# Função para inicializar o banco de dados e criar as tabelas necessárias.
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    # Tabela de Turmas
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS turmas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL UNIQUE
         );
     ''')
+    
+    # Tabela de Alunos
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS alunos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             turma_id INTEGER NOT NULL,
-            FOREIGN KEY (turma_id) REFERENCES turmas(id)
+            FOREIGN KEY (turma_id) REFERENCES turmas(id) ON DELETE CASCADE
         );
     ''')
+    
+    # Tabela de Tarefas
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tarefas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL UNIQUE
         );
     ''')
+    
+    # Tabela de Sorteios (histórico)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS sorteios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
